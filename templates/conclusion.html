@@ -1,0 +1,25 @@
+<html> 
+    <title>{{.PageTitle}}</title>
+    <body> 
+        <ul>
+            <!-- <a href={{.FirstQuestionUrl}}> -->
+            <video id="endVideo" controls autoplay width="80%">
+                <source src="/statics/videos/{{.Video}}"
+                        type="video/mp4">
+            
+                Sorry, your browser doesn't support embedded videos.
+            </video>
+        </ul>
+        <li><a href="/">Recommencer</a></li>
+    </body> 
+</html>
+
+<style type="text/css">
+    video#endVideo {
+        position: fixed; right: 0; bottom: 0;
+        min-width: 100%; min-height: 100%;
+        width: auto; height: auto; z-index: -100;
+        background: url(polina.jpg) no-repeat;
+        background-size: cover;
+      }
+</style>
