@@ -10,24 +10,34 @@ import (
 	"github.com/gorilla/websocket"
 	"time"
 	"strconv"
+	"strings"
 )
 
+type Home struct {
+	ButtonText   string
+	IntroURL string
+}
+
 type Intro struct {
-	PageTitle   string
 	Video   string
 	FirstQuestionURL string
 }
 
+type Conclusion struct {
+	Video   string
+}
+
 type Question struct {
 	ID       string
-	PageTitle   string
 	Image    string
+	Legend string
 	Response    string
 	Success   bool
 	WrongAnswer   bool
 }
 
 var questions []*Question
+var introURL string
 var endGameURL string
 
 var upgrader = websocket.Upgrader{
@@ -36,7 +46,8 @@ var upgrader = websocket.Upgrader{
 }
 var tick = time.Tick(1*time.Second)
 var timerStarted = false
-var countdown = 3600
+var countdown int
+var stopTimer = make(chan struct{})
 
 func main() {
 	// Init vars
@@ -45,7 +56,8 @@ func main() {
 	//Initialisation des routes
 	r:= mux.NewRouter()
 	//Manipulation des routes
-	r.HandleFunc("/", displayIntro).Methods("GET")
+	r.HandleFunc("/", displayHome).Methods("GET")
+	r.HandleFunc(introURL, displayIntro).Methods("GET")
 	r.HandleFunc("/q/{id}", getQuestion).Methods("GET")
 	r.HandleFunc("/q/{id}", postAnswer).Methods("POST")
 	r.HandleFunc(endGameURL, displayConclusion).Methods("GET")
@@ -59,29 +71,53 @@ func main() {
 
 func initVars(){
 	log.Print("Initializing app variables")
+	introURL = "/" + randomString(20)
 	endGameURL = "/" + randomString(20)
 	questions =  []*Question{
-		{ID: randomString(20), PageTitle: "Question 1", Image: "virus_1.jpeg", Response: "gagne"},
-		{ID: randomString(20), PageTitle: "Question 2", Image: "virus_2.jpeg", Response: "gagne"},
-		{ID: randomString(20), PageTitle: "Question 3", Image: "virus_3.jpeg", Response: "gagne"},
-		{ID: randomString(20), PageTitle: "Question 4", Image: "virus_4.jpeg", Response: "gagne"},
+		{ID: randomString(20), Legend: "Bacille de Koch",     Image: "bacille-de-koch.jpg",      Response: "GAGNE"},  //Response: "TUBERCULOSE"},
+		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-1.jpg",          Response: "GAGNE"},  //Response: "SYNDROME DE DOWN"},
+		{ID: randomString(20), Legend: "Clostridium tetanii", Image: "clostridium-tetanii.png",  Response: "GAGNE"},  //Response: "TETANOS"},
+		{ID: randomString(20), Legend: "Caryotype féminin",   Image: "caryotype-2.jpg",          Response: "GAGNE"},  //Response: "MONOSOMIE 7"},
+		{ID: randomString(20), Legend: "Virus MV",            Image: "virus-mv.jpg",             Response: "GAGNE"},  //Response: "ROUGEOLE"},
+		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-3.png",          Response: "GAGNE"},  //Response: "SYNDROME DE TURNER"},
+		{ID: randomString(20), Legend: "Treponema palidium",  Image: "treponema.jpg",            Response: "GAGNE"},  //Response: "SYPHILIS"},
+		{ID: randomString(20), Legend: "Zaïre ebolavirus",    Image: "zaire-ebolavirus.jpg",     Response: "GAGNE"},  //Response: "EBOLA"},
+		{ID: randomString(20), Legend: "Sarcopte",            Image: "sarcopte.jpg",             Response: "GAGNE"},  //Response: "GALE"},
+		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-4.png",          Response: "GAGNE"},  //Response: "SYNDROME DE KLINEFELTER"},
 	}
 }
 
 func initTimer() {
+	countdown = 3600
 	timerStarted = true
+	stopTimer = make(chan struct{})
+	log.Print("Start timer")
 	for countdown > 0 {
-		log.Printf("Time remaining: %d", countdown)
-		countdown--
-		<-tick
+		select {
+			default:
+				log.Printf("Time remaining: %d", countdown)
+				countdown--
+				<-tick
+			case <-stopTimer:
+				log.Print("Timer stopped")
+				timerStarted = false
+				return
+		}
 	}
 }
 
-//func displayQuizz(w http.ResponseWriter, r *http.Request)
+func displayHome(w http.ResponseWriter, r *http.Request){
+	tmpl := template.Must(template.ParseFiles("templates/home.html"))
+	data := Home{
+		ButtonText: "Bienvenue dans le quizz",
+		IntroURL: introURL,
+	}
+	tmpl.Execute(w, data)
+}
+
 func displayIntro(w http.ResponseWriter, r *http.Request){
 	tmpl := template.Must(template.ParseFiles("templates/intro.html"))
 	data := Intro{
-		PageTitle: "Bienvenue dans le quizz",
 		Video: "intro.mp4",
 		FirstQuestionURL: "/q/" + questions[0].ID,
 	}
@@ -89,9 +125,9 @@ func displayIntro(w http.ResponseWriter, r *http.Request){
 }
 
 func displayConclusion(w http.ResponseWriter, r *http.Request){
+	close(stopTimer)
 	tmpl := template.Must(template.ParseFiles("templates/conclusion.html"))
-	data := Intro{
-		PageTitle: "Terminé",
+	data := Conclusion{
 		Video: "endgame.mp4",
 	}
 	tmpl.Execute(w, data)
@@ -120,7 +156,7 @@ func postAnswer(w http.ResponseWriter, r *http.Request){
 	questionID := mux.Vars(r)["id"]
 
 	question := getQuestionByID(questionID)
-	if(question.Response == proposal) {
+	if(strings.ToUpper(question.Response) == strings.ToUpper(proposal)) {
 		question.Success = true
 		question.WrongAnswer = false
 		next := getNextPage(question.ID)
@@ -161,7 +197,17 @@ func writer(conn *websocket.Conn) {
     for {
         for countdown > 0 {
 			quotient := strconv.Itoa(countdown / 60) // integer division, decimals are truncated
+			if (len(quotient) == 1) {
+				quotient = " " + quotient
+			} else if (len(quotient) == 0) {
+				quotient = "  "
+			}
+
 			remainder := strconv.Itoa(countdown % 60)
+			if (len(remainder) == 1) {
+				remainder = "0" + remainder
+			}
+
 			timeRemaining := quotient + ":" + remainder
 
 			if err := conn.WriteMessage(1, []byte(timeRemaining)); err != nil {

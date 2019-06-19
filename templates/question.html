@@ -1,5 +1,5 @@
 <html> 
-    <title>{{.PageTitle}}</title>
+    <title>Quiz</title>
     <body> 
             <div>
                 <p id="timer">counter</p>
@@ -7,6 +7,11 @@
             <div>
                 <img src="/statics/img/{{.Image}}">
             </div>
+            <br />
+            <div>
+                <p id="legend">{{.Legend}}</p>
+            </div>
+            <br />
             <br />
             <!-- heirarchy: #cuboid > form > div*4(cuboid faces) -->
             <div id="cuboid">
@@ -99,6 +104,13 @@
 
 <style type="text/css">
     img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+    }
+
+    #legend {
         display: block;
         margin-left: auto;
         margin-right: auto;
