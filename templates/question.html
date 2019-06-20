@@ -2,8 +2,9 @@
     <title>Quiz</title>
     <body> 
             <div>
-                <p id="timer">counter</p>
+                <p id="timer" class="timer-ok">00:00</p>
             </div>
+            <br />
             <div>
                 <img src="/statics/img/{{.Image}}">
             </div>
@@ -18,7 +19,7 @@
                 <form method="POST">
                     <!-- #1 hover button -->
                     <div>
-                        <p class="cuboid-text">Que voyez vous sur cette photo ?</p>
+                        <p class="cuboid-text">Maladie :</p>
                     </div>
                     <!-- #2 text input -->
                     <div>
@@ -47,34 +48,6 @@
             {{ end }}
     </body> 
     <script>
-        //window.onbeforeunload = function() {
-        //    socket.close();
-        //};
-
-        //add '.ready' to form when user focuses on it
-        //$("#response").focus(function(){
-        //    $("#cuboid form").addClass("ready");
-        //})
-        //remove '.ready' when user blus away but only if there is no content
-        //$("#response").blur(function(){
-        //    if($(this).val() == "")
-        //        $("#cuboid form").removeClass("ready");
-        //})
-        
-        //If the user is typing something make the arrow green/.active
-        //$("#response").keyup(function(){
-        //    //this adds .active class only if the input has some text
-        //    $(".submit-icon").toggleClass("active", $(this).val().length > 0);
-        //})
-        
-        //on form submit remove .ready and add .loading to the form
-        //$("#cuboid form").submit(function(){
-        //    $(this).removeClass("ready").addClass("loading");
-        //    //finish loading in 3s
-        //    setTimeout(complete, 3000);
-        //    //prevent default form submisson
-        //    return false;
-        //})
         function complete()
         {
             $("#cuboid form").removeClass("loading").addClass("complete");
@@ -97,12 +70,46 @@
 
         socket.onmessage = (evt) => {
             console.log("Successfully Message Received : " + evt.data);
-            document.getElementById("timer").innerText = evt.data;
+            var time = evt.data;
+            if(time === "OverTime") {
+                window.location.href = '{{.EndGameDeadURL}}';
+            } else {
+                var TIMER = document.getElementById("timer");
+                TIMER.innerText = time;
+                if(time.startsWith('4:') 
+                    || time.startsWith('3:')
+                    || time.startsWith('2:')
+                    || time.startsWith('1:')
+                    || time.startsWith(':')) {
+                    TIMER.className = "timer-warning";
+                }
+            }
+
         };
     </script>
 </html>
 
 <style type="text/css">
+    .timer-ok {
+        margin: 0 auto;
+        width: 100%; 
+        font-family: Agenda-Light, Agenda Light, Agenda, Arial Narrow, sans-serif;
+        font-weight:100; 
+        color: hsl(131, 64%, 40%);
+        font-size: 3rem;
+        text-align: center
+    }
+
+    .timer-warning {
+        margin: 0 auto;
+        width: 100%; 
+        font-family: Agenda-Light, Agenda Light, Agenda, Arial Narrow, sans-serif;
+        font-weight:100; 
+        color: red;
+        font-size: 3rem;
+        text-align: center
+    }
+
     img {
         display: block;
         margin-left: auto;
@@ -111,10 +118,14 @@
     }
 
     #legend {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        width: 50%;
+        margin: 0 auto;
+        width: 100%; 
+        font-family: Agenda-Light, Agenda Light, Agenda, Arial Narrow, sans-serif;
+        font-weight:100; 
+        font-style: italic;
+        color: black;
+        font-size: 1.2rem;
+        text-align: center;
     }
 
     .fun-cube i {transform: scale(10); opacity: 0.1;}
@@ -138,11 +149,13 @@
     /*faces*/
     .cuboid-text {
         /*each face will be 40px high*/
+        color: white;
         line-height: 40px; height: 40px;
-        background: hsl(120, 40%, 20%);
+        background: hsl(131, 64%, 40%);
+        padding: 0 10px;
     }
     .loader {
-        background: hsl(120, 40%, 30%);
+        background: hsl(131, 64%, 40%);
         animation: phase 1s infinite;
     }
     /*Lets create a pulsating animation for the loader face*/

@@ -32,6 +32,7 @@ type Question struct {
 	Image    string
 	Legend string
 	Response    string
+	EndGameDeadURL string
 	Success   bool
 	WrongAnswer   bool
 }
@@ -39,6 +40,7 @@ type Question struct {
 var questions []*Question
 var introURL string
 var endGameURL string
+var endGameDeadURL string
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -61,6 +63,7 @@ func main() {
 	r.HandleFunc("/q/{id}", getQuestion).Methods("GET")
 	r.HandleFunc("/q/{id}", postAnswer).Methods("POST")
 	r.HandleFunc(endGameURL, displayConclusion).Methods("GET")
+	r.HandleFunc(endGameDeadURL, displayEndDead).Methods("GET")
 	r.PathPrefix("/statics/").Handler(http.StripPrefix("/statics/", http.FileServer(http.Dir("./assets"))))
 	r.HandleFunc("/timer", readTimer).Methods("GET")
 
@@ -73,22 +76,23 @@ func initVars(){
 	log.Print("Initializing app variables")
 	introURL = "/" + randomString(20)
 	endGameURL = "/" + randomString(20)
+	endGameDeadURL = "/" + randomString(20)
 	questions =  []*Question{
-		{ID: randomString(20), Legend: "Bacille de Koch",     Image: "bacille-de-koch.jpg",      Response: "TUBERCULOSE"},
-		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-1.jpg",          Response: "SYNDROME DE DOWN"},
-		{ID: randomString(20), Legend: "Clostridium tetanii", Image: "clostridium-tetanii.png",  Response: "TETANOS"},
-		{ID: randomString(20), Legend: "Caryotype féminin",   Image: "caryotype-2.jpg",          Response: "MONOSOMIE 7"},
-		{ID: randomString(20), Legend: "Virus MV",            Image: "virus-mv.jpg",             Response: "ROUGEOLE"},
-		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-3.png",          Response: "SYNDROME DE TURNER"},
-		{ID: randomString(20), Legend: "Treponema palidium",  Image: "treponema.jpg",            Response: "SYPHILIS"},
-		{ID: randomString(20), Legend: "Zaïre ebolavirus",    Image: "zaire-ebolavirus.jpg",     Response: "EBOLA"},
-		{ID: randomString(20), Legend: "Sarcopte",            Image: "sarcopte.jpg",             Response: "GALE"},
-		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-4.png",          Response: "SYNDROME DE KLINEFELTER"},
+		{ID: randomString(20), Legend: "Bacille de Koch",     Image: "bacille-de-koch.jpg",      EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"TUBERCULOSE"},
+		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-1.jpg",          EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"SYNDROME DE DOWN"},
+		{ID: randomString(20), Legend: "Clostridium tetanii", Image: "clostridium-tetanii.png",  EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"TETANOS"},
+		{ID: randomString(20), Legend: "Caryotype féminin",   Image: "caryotype-2.jpg",          EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"MONOSOMIE 7"},
+		{ID: randomString(20), Legend: "Virus MV",            Image: "virus-mv.jpg",             EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"ROUGEOLE"},
+		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-3.png",          EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"SYNDROME DE TURNER"},
+		{ID: randomString(20), Legend: "Treponema palidium",  Image: "treponema.jpg",            EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"SYPHILIS"},
+		{ID: randomString(20), Legend: "Zaïre ebolavirus",    Image: "zaire-ebolavirus.jpg",     EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"EBOLA"},
+		{ID: randomString(20), Legend: "Sarcopte",            Image: "sarcopte.jpg",             EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"GALE"},
+		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-4.png",          EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"SYNDROME DE KLINEFELTER"},
 	}
 }
 
 func initTimer() {
-	countdown = 3600
+	countdown = 30 //3600
 	timerStarted = true
 	stopTimer = make(chan struct{})
 	log.Print("Start timer")
@@ -103,9 +107,13 @@ func initTimer() {
 				return
 		}
 	}
+	timerStarted = false
 }
 
 func displayHome(w http.ResponseWriter, r *http.Request){
+	if(timerStarted) {
+		close(stopTimer)
+	}
 	tmpl := template.Must(template.ParseFiles("templates/home.html"))
 	data := Home{
 		ButtonText: "Bienvenue dans le quizz",
@@ -115,6 +123,9 @@ func displayHome(w http.ResponseWriter, r *http.Request){
 }
 
 func displayIntro(w http.ResponseWriter, r *http.Request){
+	if(timerStarted) {
+		close(stopTimer)
+	}
 	tmpl := template.Must(template.ParseFiles("templates/intro.html"))
 	data := Intro{
 		Video: "intro.mp4",
@@ -130,6 +141,12 @@ func displayConclusion(w http.ResponseWriter, r *http.Request){
 		Video: "endgame.mp4",
 	}
 	tmpl.Execute(w, data)
+}
+
+func displayEndDead(w http.ResponseWriter, r *http.Request){
+	close(stopTimer)
+	tmpl := template.Must(template.ParseFiles("templates/dead.html"))
+	tmpl.Execute(w, nil)
 }
 
 func getQuestion(w http.ResponseWriter, r *http.Request){
@@ -198,7 +215,7 @@ func writer(conn *websocket.Conn) {
 			quotient := strconv.Itoa(countdown / 60) // integer division, decimals are truncated
 			if (len(quotient) == 1) {
 				quotient = " " + quotient
-			} else if (len(quotient) == 0) {
+			} else if (quotient == 0) {
 				quotient = "  "
 			}
 
@@ -214,6 +231,10 @@ func writer(conn *websocket.Conn) {
 				return
 			}
 			time.Sleep(time.Second)
+		}
+		if err := conn.WriteMessage(1, []byte("OverTime")); err != nil {
+			log.Println(err)
+			return
 		}
     }
 }
