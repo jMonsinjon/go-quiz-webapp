@@ -78,21 +78,21 @@ func initVars(){
 	endGameURL = "/" + randomString(20)
 	endGameDeadURL = "/" + randomString(20)
 	questions =  []*Question{
-		{ID: randomString(20), Legend: "Bacille de Koch",     Image: "bacille-de-koch.jpg",      EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"TUBERCULOSE"},
-		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-1.jpg",          EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"SYNDROME DE DOWN"},
-		{ID: randomString(20), Legend: "Clostridium tetanii", Image: "clostridium-tetanii.png",  EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"TETANOS"},
-		{ID: randomString(20), Legend: "Caryotype féminin",   Image: "caryotype-2.jpg",          EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"MONOSOMIE 7"},
-		{ID: randomString(20), Legend: "Virus MV",            Image: "virus-mv.jpg",             EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"ROUGEOLE"},
-		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-3.png",          EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"SYNDROME DE TURNER"},
-		{ID: randomString(20), Legend: "Treponema palidium",  Image: "treponema.jpg",            EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"SYPHILIS"},
-		{ID: randomString(20), Legend: "Zaïre ebolavirus",    Image: "zaire-ebolavirus.jpg",     EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"EBOLA"},
-		{ID: randomString(20), Legend: "Sarcopte",            Image: "sarcopte.jpg",             EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"GALE"},
-		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-4.png",          EndGameDeadURL: endGameDeadURL,   Response: "gagne"}, //"SYNDROME DE KLINEFELTER"},
+		{ID: randomString(20), Legend: "Bacille de Koch",     Image: "bacille-de-koch.jpg",      EndGameDeadURL: endGameDeadURL,   Response: "TUBERCULOSE"},
+		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-1.jpg",          EndGameDeadURL: endGameDeadURL,   Response: "SYNDROME DE DOWN"},
+		{ID: randomString(20), Legend: "Clostridium tetanii", Image: "clostridium-tetanii.png",  EndGameDeadURL: endGameDeadURL,   Response: "TETANOS"},
+		{ID: randomString(20), Legend: "Caryotype féminin",   Image: "caryotype-2.jpg",          EndGameDeadURL: endGameDeadURL,   Response: "MONOSOMIE 7"},
+		{ID: randomString(20), Legend: "Virus MV",            Image: "virus-mv.jpg",             EndGameDeadURL: endGameDeadURL,   Response: "ROUGEOLE"},
+		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-3.png",          EndGameDeadURL: endGameDeadURL,   Response: "SYNDROME DE TURNER"},
+		{ID: randomString(20), Legend: "Treponema palidium",  Image: "treponema.jpg",            EndGameDeadURL: endGameDeadURL,   Response: "SYPHILIS"},
+		{ID: randomString(20), Legend: "Zaïre ebolavirus",    Image: "zaire-ebolavirus.jpg",     EndGameDeadURL: endGameDeadURL,   Response: "EBOLA"},
+		{ID: randomString(20), Legend: "Sarcopte",            Image: "sarcopte.jpg",             EndGameDeadURL: endGameDeadURL,   Response: "GALE"},
+		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-4.png",          EndGameDeadURL: endGameDeadURL,   Response: "SYNDROME DE KLINEFELTER"},
 	}
 }
 
 func initTimer() {
-	countdown = 360 //3600
+	countdown = 3000
 	timerStarted = true
 	stopTimer = make(chan struct{})
 	log.Print("Start timer")
