@@ -74,16 +74,16 @@ func initVars(){
 	introURL = "/" + randomString(20)
 	endGameURL = "/" + randomString(20)
 	questions =  []*Question{
-		{ID: randomString(20), Legend: "Bacille de Koch",     Image: "bacille-de-koch.jpg",      Response: "GAGNE"},  //Response: "TUBERCULOSE"},
-		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-1.jpg",          Response: "GAGNE"},  //Response: "SYNDROME DE DOWN"},
-		{ID: randomString(20), Legend: "Clostridium tetanii", Image: "clostridium-tetanii.png",  Response: "GAGNE"},  //Response: "TETANOS"},
-		{ID: randomString(20), Legend: "Caryotype féminin",   Image: "caryotype-2.jpg",          Response: "GAGNE"},  //Response: "MONOSOMIE 7"},
-		{ID: randomString(20), Legend: "Virus MV",            Image: "virus-mv.jpg",             Response: "GAGNE"},  //Response: "ROUGEOLE"},
-		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-3.png",          Response: "GAGNE"},  //Response: "SYNDROME DE TURNER"},
-		{ID: randomString(20), Legend: "Treponema palidium",  Image: "treponema.jpg",            Response: "GAGNE"},  //Response: "SYPHILIS"},
-		{ID: randomString(20), Legend: "Zaïre ebolavirus",    Image: "zaire-ebolavirus.jpg",     Response: "GAGNE"},  //Response: "EBOLA"},
-		{ID: randomString(20), Legend: "Sarcopte",            Image: "sarcopte.jpg",             Response: "GAGNE"},  //Response: "GALE"},
-		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-4.png",          Response: "GAGNE"},  //Response: "SYNDROME DE KLINEFELTER"},
+		{ID: randomString(20), Legend: "Bacille de Koch",     Image: "bacille-de-koch.jpg",      Response: "TUBERCULOSE"},
+		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-1.jpg",          Response: "SYNDROME DE DOWN"},
+		{ID: randomString(20), Legend: "Clostridium tetanii", Image: "clostridium-tetanii.png",  Response: "TETANOS"},
+		{ID: randomString(20), Legend: "Caryotype féminin",   Image: "caryotype-2.jpg",          Response: "MONOSOMIE 7"},
+		{ID: randomString(20), Legend: "Virus MV",            Image: "virus-mv.jpg",             Response: "ROUGEOLE"},
+		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-3.png",          Response: "SYNDROME DE TURNER"},
+		{ID: randomString(20), Legend: "Treponema palidium",  Image: "treponema.jpg",            Response: "SYPHILIS"},
+		{ID: randomString(20), Legend: "Zaïre ebolavirus",    Image: "zaire-ebolavirus.jpg",     Response: "EBOLA"},
+		{ID: randomString(20), Legend: "Sarcopte",            Image: "sarcopte.jpg",             Response: "GALE"},
+		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-4.png",          Response: "SYNDROME DE KLINEFELTER"},
 	}
 }
 
@@ -95,7 +95,6 @@ func initTimer() {
 	for countdown > 0 {
 		select {
 			default:
-				log.Printf("Time remaining: %d", countdown)
 				countdown--
 				<-tick
 			case <-stopTimer:
