@@ -76,11 +76,11 @@
             } else {
                 var TIMER = document.getElementById("timer");
                 TIMER.innerText = time;
-                if(time.startsWith('4:') 
-                    || time.startsWith('3:')
-                    || time.startsWith('2:')
-                    || time.startsWith('1:')
-                    || time.startsWith(':')) {
+                if(time.startsWith(' 4:') 
+                    || time.startsWith(' 3:')
+                    || time.startsWith(' 2:')
+                    || time.startsWith(' 1:')
+                    || time.startsWith('  :')) {
                     TIMER.className = "timer-warning";
                 }
             }

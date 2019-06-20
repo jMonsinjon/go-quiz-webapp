@@ -92,7 +92,7 @@ func initVars(){
 }
 
 func initTimer() {
-	countdown = 30 //3600
+	countdown = 360 //3600
 	timerStarted = true
 	stopTimer = make(chan struct{})
 	log.Print("Start timer")
@@ -135,7 +135,9 @@ func displayIntro(w http.ResponseWriter, r *http.Request){
 }
 
 func displayConclusion(w http.ResponseWriter, r *http.Request){
-	close(stopTimer)
+	if(timerStarted) {
+		close(stopTimer)
+	}
 	tmpl := template.Must(template.ParseFiles("templates/conclusion.html"))
 	data := Conclusion{
 		Video: "endgame.mp4",
@@ -213,11 +215,11 @@ func writer(conn *websocket.Conn) {
     for {
         for countdown > 0 {
 			quotient := strconv.Itoa(countdown / 60) // integer division, decimals are truncated
-			if (len(quotient) == 1) {
-				quotient = " " + quotient
-			} else if (quotient == 0) {
+			if (quotient == "0") {
 				quotient = "  "
-			}
+			} else if (len(quotient) == 1) {
+				quotient = " " + quotient
+			} 
 
 			remainder := strconv.Itoa(countdown % 60)
 			if (len(remainder) == 1) {
