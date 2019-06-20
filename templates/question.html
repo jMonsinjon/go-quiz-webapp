@@ -80,7 +80,7 @@
             $("#cuboid form").removeClass("loading").addClass("complete");
         }
 
-        let socket = new WebSocket("ws://localhost:8080/timer");
+        let socket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/timer");
         console.log("Attempting Connection...");
 
         socket.onopen = () => {
