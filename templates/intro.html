@@ -1,29 +1,25 @@
 <html> 
     <title>Quiz</title>
     <body> 
-        <video id="introVideo" controls autoplay>
+        <video id="introVideo" controls autoplay loop>
             <source src="/statics/videos/{{.Video}}"
                     type="video/mp4">
         
             Sorry, your browser doesn't support embedded videos.
         </video>
-        <script>
-            var vid = document.getElementById("introVideo");
-            vid.onended = function() {
-                window.location.href = '{{.FirstQuestionURL}}';
-            };
-        </script>
+        <a href="{{.FirstQuestionURL}}">
         <div id="introText">
             <h3><i>UNE LETTRE A ETE RETROUVEE DANS L’ANCIEN COLLEGE…</i></h3>
-            <p>CHER AMI,
-            <p>CA Y EST JE SUIS PARVENUE A PREPARER CETTE SUPER MALADIE. EN COMBINANT LES EFFETS DE DIFFERENTES SYNDROMES GENETIQUES ET INFECTIONS, J’AI RECREE UN ANTIGENE CAPABLE DE DETRUIRE TOUS LES HABITANTS DE LA PLANETE.</p>
-            <p>LA PRODUCTION EST PREVUE LE 24 JUIN, A LA FIN DU TIMER.</p>
-            <p>PERSONNE NE PEUT L’ARRETER, IL FAUDRAIT POUR CELA RETROUVER LE CODE PERMETTANT D’OUVRIR LE COFFRE. TU SAIS, LE COFFRE FERME PAR LE CADENAS 4 COULEURS, IL CONTIENT MES FICHES PERMETTANT D’IDENTIFIER LES 10 MALADIES A L’ORIGINE DE MON CHEF D’ŒUVRE ET DESACTIVER LA PRODUCTION.</p>
-            <p>AU VU DES INDICES QUE J’AI LAISSE POUR OUVRIR CE CADENAS, PERSONNE NE SERA EN MESURE DE TROUVER LE CODE !</p>
-            <p>HAHAHAHAHAHA QUEL BONHEUR.</p>
+            <p>CHER AMI,</p>
+            <p>CA Y EST JE SUIS PARVENU A PREPARER CETTE SUPER MALADIE. EN COMBINANT LES EFFETS DE DIFFERENTS SYNDROMES GENETIQUES ET INFECTIONS, J’AI RECREE UN ANTIGENE CAPABLE DE DETRUIRE TOUS LES HABITANTS DE LA PLANETE.</p>
+            <p>LA PRODUCTION EST PREVUE LE &nbsp;&nbsp;&nbsp;<font size="6"><strong>24 JUIN, A LA FIN DU TIMER.</strong></font></p>
+            <p>PERSONNE NE PEUT L’ARRETER, IL FAUDRAIT POUR CELA RETROUVER LE CODE PERMETTANT D’OUVRIR LE COFFRE. TU SAIS, LE COFFRE FERME PAR LE &nbsp;&nbsp;<font size="6"><strong>CADENAS 4 COULEURS</strong></font>&nbsp;&nbsp;, IL CONTIENT MES FICHES PERMETTANT D’IDENTIFIER LES &nbsp;&nbsp;<font size="6"><strong>10 MALADIES</strong></font>&nbsp;&nbsp; A L’ORIGINE DE MON CHEF D’ŒUVRE ET DE &nbsp;&nbsp;<font size="6"><strong>DESACTIVER LA PRODUCTION.</strong></font></p>
+            <p>AU VU DES &nbsp;&nbsp;<font size="6"><strong>INDICES</strong></font>&nbsp;&nbsp; QUE J’AI LAISSE POUR OUVRIR CE CADENAS, PERSONNE NE SERA EN MESURE DE TROUVER LE CODE !</p>
+            <p><font size="6"><strong>HAHAHAHAHAHA QUEL BONHEUR.</strong></font>&nbsp;&nbsp;</p>
             <p>AVEC LA VENTE DE L’ANTIDOTE, JE DEVIENDRAI L’HOMME LE PLUS PUISSANT DE LA PLANETE.</p>
             <p>NOUS NOUS REVERRONS POUR MON AVENEMENT CHER AMI !</p>
         </div>
+        </a>
     </body> 
 </html>
 
@@ -34,15 +30,13 @@
         z-index: -100;
     }
     #introText { 
-        font-family: Agenda-Light, Agenda Light, Agenda, Arial Narrow, sans-serif;
-        font-weight:100; 
-        font-style: bold;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
         color: white;
-        padding: 1.4rem;
         width: 70%;
-        margin:4rem;
-        float: left;
-        font-size: 1.4rem;
+        margin:5rem;
+        float: top;
+        font-size: 1.2rem;
+        text-align: justify;
       }
 </style>
 
