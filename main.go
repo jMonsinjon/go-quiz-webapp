@@ -1,40 +1,40 @@
 package main
 
 import (
-	"log"
-	"html/template"
-	"net/http"
-	"github.com/gorilla/mux"
-	"math/rand"
 	"flag"
+	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
-	"time"
+	"html/template"
+	"log"
+	"math/rand"
+	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Home struct {
-	ButtonText   string
-	IntroURL string
+	ButtonText string
+	IntroURL   string
 }
 
 type Intro struct {
-	Video   string
+	Video            string
 	FirstQuestionURL string
 }
 
 type Conclusion struct {
-	Video   string
+	Video string
 }
 
 type Question struct {
-	ID       string
-	Image    string
-	Legend string
-	Response    string
+	ID             string
+	Image          string
+	Legend         string
+	Response       string
 	EndGameDeadURL string
-	Success   bool
-	WrongAnswer   bool
+	Success        bool
+	WrongAnswer    bool
 }
 
 var questions []*Question
@@ -46,7 +46,7 @@ var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 }
-var tick = time.Tick(1*time.Second)
+var tick = time.Tick(1 * time.Second)
 var timerStarted = false
 var countdown int
 var stopTimer = make(chan struct{})
@@ -56,7 +56,7 @@ func main() {
 	initVars()
 
 	//Initialisation des routes
-	r:= mux.NewRouter()
+	r := mux.NewRouter()
 	//Manipulation des routes
 	r.HandleFunc("/", displayHome).Methods("GET")
 	r.HandleFunc(introURL, displayIntro).Methods("GET")
@@ -72,22 +72,22 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+*port, r))
 }
 
-func initVars(){
+func initVars() {
 	log.Print("Initializing app variables")
 	introURL = "/" + randomString(20)
 	endGameURL = "/" + randomString(20)
 	endGameDeadURL = "/" + randomString(20)
-	questions =  []*Question{
-		{ID: randomString(20), Legend: "Bacille de Koch",     Image: "bacille-de-koch.jpg",      EndGameDeadURL: endGameDeadURL,   Response: "TUBERCULOSE"},
-		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-1.jpg",          EndGameDeadURL: endGameDeadURL,   Response: "SYNDROME DE DOWN"},
-		{ID: randomString(20), Legend: "Clostridium tetanii", Image: "clostridium-tetanii.png",  EndGameDeadURL: endGameDeadURL,   Response: "TETANOS"},
-		{ID: randomString(20), Legend: "Caryotype féminin",   Image: "caryotype-2.jpg",          EndGameDeadURL: endGameDeadURL,   Response: "MONOSOMIE 7"},
-		{ID: randomString(20), Legend: "Virus MV",            Image: "virus-mv.jpg",             EndGameDeadURL: endGameDeadURL,   Response: "ROUGEOLE"},
-		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-3.png",          EndGameDeadURL: endGameDeadURL,   Response: "SYNDROME DE TURNER"},
-		{ID: randomString(20), Legend: "Treponema palidium",  Image: "treponema.jpg",            EndGameDeadURL: endGameDeadURL,   Response: "SYPHILIS"},
-		{ID: randomString(20), Legend: "Zaïre ebolavirus",    Image: "zaire-ebolavirus.jpg",     EndGameDeadURL: endGameDeadURL,   Response: "EBOLA"},
-		{ID: randomString(20), Legend: "Sarcopte",            Image: "sarcopte.jpg",             EndGameDeadURL: endGameDeadURL,   Response: "GALE"},
-		{ID: randomString(20), Legend: "Caryotype masculin",  Image: "caryotype-4.png",          EndGameDeadURL: endGameDeadURL,   Response: "SYNDROME DE KLINEFELTER"},
+	questions = []*Question{
+		{ID: randomString(20), Legend: "Bacille de Koch", Image: "bacille-de-koch.jpg", EndGameDeadURL: endGameDeadURL, Response: "TUBERCULOSE"},
+		{ID: randomString(20), Legend: "Caryotype masculin", Image: "caryotype-1.jpg", EndGameDeadURL: endGameDeadURL, Response: "SYNDROME DE DOWN"},
+		{ID: randomString(20), Legend: "Clostridium tetanii", Image: "clostridium-tetanii.png", EndGameDeadURL: endGameDeadURL, Response: "TETANOS"},
+		{ID: randomString(20), Legend: "Caryotype féminin", Image: "caryotype-2.jpg", EndGameDeadURL: endGameDeadURL, Response: "MONOSOMIE 7"},
+		{ID: randomString(20), Legend: "Virus MV", Image: "virus-mv.jpg", EndGameDeadURL: endGameDeadURL, Response: "ROUGEOLE"},
+		{ID: randomString(20), Legend: "Caryotype masculin", Image: "caryotype-3.png", EndGameDeadURL: endGameDeadURL, Response: "SYNDROME DE TURNER"},
+		{ID: randomString(20), Legend: "Treponema palidium", Image: "treponema.jpg", EndGameDeadURL: endGameDeadURL, Response: "SYPHILIS"},
+		{ID: randomString(20), Legend: "Zaïre ebolavirus", Image: "zaire-ebolavirus.jpg", EndGameDeadURL: endGameDeadURL, Response: "EBOLA"},
+		{ID: randomString(20), Legend: "Sarcopte", Image: "sarcopte.jpg", EndGameDeadURL: endGameDeadURL, Response: "GALE"},
+		{ID: randomString(20), Legend: "Caryotype masculin", Image: "caryotype-4.png", EndGameDeadURL: endGameDeadURL, Response: "SYNDROME DE KLINEFELTER"},
 	}
 }
 
@@ -98,44 +98,44 @@ func initTimer() {
 	log.Print("Start timer")
 	for countdown > 0 {
 		select {
-			default:
-				countdown--
-				<-tick
-			case <-stopTimer:
-				log.Print("Timer stopped")
-				timerStarted = false
-				return
+		default:
+			countdown--
+			<-tick
+		case <-stopTimer:
+			log.Print("Timer stopped")
+			timerStarted = false
+			return
 		}
 	}
 	timerStarted = false
 }
 
-func displayHome(w http.ResponseWriter, r *http.Request){
-	if(timerStarted) {
+func displayHome(w http.ResponseWriter, r *http.Request) {
+	if timerStarted {
 		close(stopTimer)
 	}
 	tmpl := template.Must(template.ParseFiles("templates/home.html"))
 	data := Home{
 		ButtonText: "Bienvenue dans le quizz",
-		IntroURL: introURL,
+		IntroURL:   introURL,
 	}
 	tmpl.Execute(w, data)
 }
 
-func displayIntro(w http.ResponseWriter, r *http.Request){
-	if(timerStarted) {
+func displayIntro(w http.ResponseWriter, r *http.Request) {
+	if timerStarted {
 		close(stopTimer)
 	}
 	tmpl := template.Must(template.ParseFiles("templates/intro.html"))
 	data := Intro{
-		Video: "intro.mp4",
+		Video:            "intro.mp4",
 		FirstQuestionURL: "/q/" + questions[0].ID,
 	}
 	tmpl.Execute(w, data)
 }
 
-func displayConclusion(w http.ResponseWriter, r *http.Request){
-	if(timerStarted) {
+func displayConclusion(w http.ResponseWriter, r *http.Request) {
+	if timerStarted {
 		close(stopTimer)
 	}
 	tmpl := template.Must(template.ParseFiles("templates/conclusion.html"))
@@ -145,18 +145,18 @@ func displayConclusion(w http.ResponseWriter, r *http.Request){
 	tmpl.Execute(w, data)
 }
 
-func displayEndDead(w http.ResponseWriter, r *http.Request){
+func displayEndDead(w http.ResponseWriter, r *http.Request) {
 	close(stopTimer)
 	tmpl := template.Must(template.ParseFiles("templates/dead.html"))
 	tmpl.Execute(w, nil)
 }
 
-func getQuestion(w http.ResponseWriter, r *http.Request){
-	if (!timerStarted) {
+func getQuestion(w http.ResponseWriter, r *http.Request) {
+	if !timerStarted {
 		go initTimer()
 	}
 
-	params:= mux.Vars(r)
+	params := mux.Vars(r)
 	questionID := params["id"]
 	question := getQuestionByID(questionID)
 
@@ -169,12 +169,12 @@ func getQuestion(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-func postAnswer(w http.ResponseWriter, r *http.Request){
+func postAnswer(w http.ResponseWriter, r *http.Request) {
 	proposal := r.FormValue("response")
 	questionID := mux.Vars(r)["id"]
 
 	question := getQuestionByID(questionID)
-	if(strings.ToUpper(question.Response) == strings.ToUpper(proposal)) {
+	if strings.ToUpper(question.Response) == strings.ToUpper(proposal) {
 		question.Success = true
 		question.WrongAnswer = false
 		next := getNextPage(question.ID)
@@ -186,10 +186,10 @@ func postAnswer(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-func readTimer(w http.ResponseWriter, r *http.Request){
+func readTimer(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
-    if err != nil {
-        log.Println(err)
+	if err != nil {
+		log.Println(err)
 	}
 	defer ws.Close()
 
@@ -198,31 +198,31 @@ func readTimer(w http.ResponseWriter, r *http.Request){
 }
 
 func reader(conn *websocket.Conn) {
-    for {
-    // read in a message
+	for {
+		// read in a message
 		_, p, err := conn.ReadMessage()
-        if err != nil {
-            log.Println(err)
-            return
+		if err != nil {
+			log.Println(err)
+			return
 		}
-		
+
 		log.Printf("Message received from client : %s", string(p))
-    }
+	}
 }
 
 func writer(conn *websocket.Conn) {
 	log.Print("Start writing into the websocket")
-    for {
-        for countdown > 0 {
+	for {
+		for countdown > 0 {
 			quotient := strconv.Itoa(countdown / 60) // integer division, decimals are truncated
-			if (quotient == "0") {
+			if quotient == "0" {
 				quotient = "  "
-			} else if (len(quotient) == 1) {
+			} else if len(quotient) == 1 {
 				quotient = " " + quotient
-			} 
+			}
 
 			remainder := strconv.Itoa(countdown % 60)
-			if (len(remainder) == 1) {
+			if len(remainder) == 1 {
 				remainder = "0" + remainder
 			}
 
@@ -238,11 +238,11 @@ func writer(conn *websocket.Conn) {
 			log.Println(err)
 			return
 		}
-    }
+	}
 }
 
-func getQuestionByID(qID string)(*Question) {
-	for _, q:= range questions {
+func getQuestionByID(qID string) *Question {
+	for _, q := range questions {
 		if q.ID == qID {
 			return q
 		}
@@ -251,13 +251,13 @@ func getQuestionByID(qID string)(*Question) {
 	return nil
 }
 
-func getNextPage(currentID string)(string){
-	for i, q:= range questions {
+func getNextPage(currentID string) string {
+	for i, q := range questions {
 		if q.ID == currentID {
-			if(i == len(questions)-1){
+			if i == len(questions)-1 {
 				// If last question, return conclusion
 				return endGameURL
-			} 
+			}
 			return "/q/" + questions[i+1].ID
 		}
 	}

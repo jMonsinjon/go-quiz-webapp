@@ -69,7 +69,6 @@
         };
 
         socket.onmessage = (evt) => {
-            console.log("Successfully Message Received : " + evt.data);
             var time = evt.data;
             if(time === "OverTime") {
                 window.location.href = '{{.EndGameDeadURL}}';
