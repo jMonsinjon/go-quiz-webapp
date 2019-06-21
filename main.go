@@ -112,6 +112,7 @@ func initTimer() {
 
 func displayHome(w http.ResponseWriter, r *http.Request) {
 	if timerStarted {
+		log.Print("Disable running timer from home page")
 		close(stopTimer)
 	}
 	tmpl := template.Must(template.ParseFiles("templates/home.html"))
@@ -124,6 +125,7 @@ func displayHome(w http.ResponseWriter, r *http.Request) {
 
 func displayIntro(w http.ResponseWriter, r *http.Request) {
 	if timerStarted {
+		log.Print("Disable running timer from intro page")
 		close(stopTimer)
 	}
 	tmpl := template.Must(template.ParseFiles("templates/intro.html"))
@@ -136,6 +138,7 @@ func displayIntro(w http.ResponseWriter, r *http.Request) {
 
 func displayConclusion(w http.ResponseWriter, r *http.Request) {
 	if timerStarted {
+		log.Print("Disable running timer from success page")
 		close(stopTimer)
 	}
 	tmpl := template.Must(template.ParseFiles("templates/conclusion.html"))
@@ -146,6 +149,7 @@ func displayConclusion(w http.ResponseWriter, r *http.Request) {
 }
 
 func displayEndDead(w http.ResponseWriter, r *http.Request) {
+	log.Print("Disable running timer from failure page")
 	close(stopTimer)
 	tmpl := template.Must(template.ParseFiles("templates/dead.html"))
 	tmpl.Execute(w, nil)
@@ -153,6 +157,7 @@ func displayEndDead(w http.ResponseWriter, r *http.Request) {
 
 func getQuestion(w http.ResponseWriter, r *http.Request) {
 	if !timerStarted {
+		log.Print("The timer isn't started, go init timer")
 		go initTimer()
 	}
 
